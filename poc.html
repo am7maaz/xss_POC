@@ -35,10 +35,12 @@ async def send_request(session, birthdate):
             if baseline_size is None:
                 baseline_size = size
 
-            if size != baseline_size:
-                print(f"[DIFF] {birthdate} -> size:{size}")
-            else:
-                print(f"{birthdate} -> size:{size}")
+            if size > baseline_size:
+                print(f"[BIGGER] {birthdate} -> size:{size}")
+
+                filename = f"response_{birthdate}.txt"
+                with open(filename, "w", encoding="utf-8") as f:
+                    f.write(text)
 
     except Exception as e:
         print(f"Error {birthdate}: {e}")
@@ -55,10 +57,7 @@ async def main():
         with open(WORDLIST) as f:
             for line in f:
                 birthdate = line.strip()
-
-                tasks.append(
-                    asyncio.create_task(send_request(session, birthdate))
-                )
+                tasks.append(asyncio.create_task(send_request(session, birthdate)))
 
         await asyncio.gather(*tasks)
 
