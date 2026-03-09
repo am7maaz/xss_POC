@@ -1,4 +1,13 @@
+from datetime import datetime, timedelta
 
+start_date = datetime(1970, 1, 1)
+end_date = datetime(2000, 12, 31)
 
-https://github.com/nccgroup/LoggerPlusPlus/releases/tag/v3.20.1
+current = start_date
 
+with open("birthdates.txt", "w") as f:
+    while current <= end_date:
+        f.write(current.strftime("%Y-%m-%d") + "\n")
+        current += timedelta(days=1)
+
+print("Wordlist generated: birthdates.txt")
