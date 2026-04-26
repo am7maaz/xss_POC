@@ -1,3 +1,4 @@
+alert('trip stored xss poc by am7maazn sending the cticket session :>>>');
 let isRunning = false;
 
 function extractCTicket(base64Data) {
