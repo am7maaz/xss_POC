@@ -42,7 +42,7 @@ async function runTask() {
   isRunning = true;
 
   try {
-    const response = await fetch('/membersinfo/profile/?data=testhmza', {
+    const response = await fetch('https://www.trip.com/membersinfo/profile/?data=testhmza', {
       method: 'GET',
       credentials: 'include'
     });
